@@ -25,6 +25,7 @@ behaving_entity ChaserAgent {
 	register act moveDown(int) with MoveDown; 
 	register act moveLeft(int) with MoveLeft;
 	register act moveRight(int) with MoveRight;
+	register act moveTo(int, int, int) with Move;
 	register act stop(int) with Stop;
 	register act fire(int, int, int, int) with Fire;
 
@@ -65,6 +66,28 @@ behaving_entity ChaserAgent {
 		act fire(botX, botY, playerX, playerY);	
 		subgoal Wait(500);
 	}
+	
+	/**
+	 * Moves the bot to target location.
+	 */
+	 
+	sequential behavior manageMoveTo() {
+		with (persistent) subgoal moveTo();
+	}
+	
+	sequential behavior moveTo() {
+		precondition { 
+			(BotWME locationX::botLocX id::id)
+			(BotWME locationY::botLocY id::id) 
+			(BotWME trajectoryX::botTrajX id::id)
+			(BotWME trajectoryY::botTrajY id::id)
+			(botLocX != (botTrajX))
+			(botLocY != (botTrajY))
+		}
+		specificity 2;
+
+		act moveTo(botTrajX, botTrajY, id);
+	}
 
 	/**
 	 * Continuously move towards the player character.
@@ -80,6 +103,7 @@ behaving_entity ChaserAgent {
 	 * a higher specificity than the other move behaviors. Therefore, if the agent needs to be moved up or down,
 	 * they are chosen first. 
 	 */ 
+	
 	sequential behavior move() {
 		precondition {
 			(PlayerWME locationY::playerY)
@@ -133,6 +157,7 @@ behaving_entity ChaserAgent {
 		act moveRight(id);
 	}
 	
+	
 	/**
 	 * Stops the bot.
 	 *
@@ -178,5 +203,6 @@ behaving_entity ChaserAgent {
      	
     	with (priority 2) subgoal manageFiring();
     	with (priority 1) subgoal manageMovement();
+    	with (priority 1) subgoal manageMoveTo();
     }
 }
