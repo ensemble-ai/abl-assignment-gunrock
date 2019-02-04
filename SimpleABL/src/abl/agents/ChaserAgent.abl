@@ -28,6 +28,7 @@ behaving_entity ChaserAgent {
 	register act moveTo(int, int, int) with Move;
 	register act stop(int) with Stop;
 	register act fire(int, int, int, int) with Fire;
+	register act setColor(int, int, int, int) with SetColor;
 
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
@@ -65,6 +66,26 @@ behaving_entity ChaserAgent {
 
 		act fire(botX, botY, playerX, playerY);	
 		subgoal Wait(500);
+	}
+	
+	
+	/**
+	 * Manage bot color.
+	 */
+	 
+	sequential behavior manageColor() {
+		with (persistent) subgoal setColor();
+	}
+	
+	sequential behavior setColor() {
+		precondition {
+			(BotWME Red::botRed id::id) 
+			(BotWME Blue::botBlue id::id) 
+			(BotWME Green::botGreen id::id) 
+		}
+		specificity 2;
+
+		act setColor(botRed,botBlue,botGreen,id);
 	}
 	
 	/**
@@ -203,6 +224,6 @@ behaving_entity ChaserAgent {
      	
     	with (priority 2) subgoal manageFiring();
     	with (priority 1) subgoal manageMovement();
-    	with (priority 1) subgoal manageMoveTo();
+    	with (priority 2) subgoal manageMoveTo();
     }
 }

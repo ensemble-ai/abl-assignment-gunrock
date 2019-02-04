@@ -12,7 +12,7 @@ import java.awt.Point;
 public class Move extends BaseAction {
 
 	/**
-	 * Sets the trajectory of the player to move down.
+	 * Sets the trajectory of the player to a specified point.
 	 * args[0] - bot id
 	 */
 	public void execute(Object[] args) {
