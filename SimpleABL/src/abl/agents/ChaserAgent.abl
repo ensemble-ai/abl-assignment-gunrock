@@ -29,6 +29,7 @@ behaving_entity ChaserAgent {
 	register act stop(int) with Stop;
 	register act fire(int, int, int, int) with Fire;
 	register act setColor(int, int, int, int) with SetColor;
+	register act spawnBot(int, int) with SpawnBot;
 
 	/**
 	 * Define the sensors that add game state to working memory. Each sensor defines the name of the WME class
@@ -73,41 +74,43 @@ behaving_entity ChaserAgent {
 	 * Manage bot color.
 	 */
 	 
-	sequential behavior manageColor() {
-		with (persistent) subgoal setColor();
+	sequential behavior manageColor(int R, int B, int G, int id) {
+		subgoal setColor(R, B, G, id);
 	}
 	
-	sequential behavior setColor() {
+	sequential behavior setColor(int R, int B, int G, int id) {
 		precondition {
-			(BotWME Red::botRed id::id) 
-			(BotWME Blue::botBlue id::id) 
-			(BotWME Green::botGreen id::id) 
+			(BotWME Red::botRed) 
+			(BotWME Blue::botBlue) 
+			(BotWME Green::botGreen)
+			(botGreen != G && botRed != R && botBlue != B) 
 		}
-		specificity 2;
+		specificity 5;
 
-		act setColor(botRed,botBlue,botGreen,id);
+		act setColor(R,B,G,id);
 	}
 	
 	/**
 	 * Moves the bot to target location.
 	 */
 	 
-	sequential behavior manageMoveTo() {
-		with (persistent) subgoal moveTo();
-	}
-	
-	sequential behavior moveTo() {
+ 	sequential behavior manageMoveTo(int X,int Y) {
+ 		with (persistent) subgoal moveTo(X,Y);
+ 	}
+ 	
+	sequential behavior moveTo(int X, int Y) {
 		precondition { 
 			(BotWME locationX::botLocX id::id)
 			(BotWME locationY::botLocY id::id) 
-			(BotWME trajectoryX::botTrajX id::id)
-			(BotWME trajectoryY::botTrajY id::id)
-			(botLocX != (botTrajX))
-			(botLocY != (botTrajY))
 		}
-		specificity 2;
+		specificity 4;
+		
+		if {(botLocX != X || botLocY != Y)} {
+		    act moveTo(X, Y, id);
+		} else {
+		    act stop(id);
+		}
 
-		act moveTo(botTrajX, botTrajY, id);
 	}
 
 	/**
@@ -222,8 +225,11 @@ behaving_entity ChaserAgent {
 			System.out.println("Starting bot Agent");
     	}
      	
+     	with (priority 2) act spawnBot(100,100);
     	with (priority 2) subgoal manageFiring();
-    	with (priority 1) subgoal manageMovement();
-    	with (priority 2) subgoal manageMoveTo();
+    //	with (priority 1) subgoal manageMovement();
+    	with (priority 1) subgoal manageMoveTo(150, 150);
+    	with (priority 1) act setColor(220,20,60, 1);
+    	with (priority 1) act setColor(220,20,60, 0);
     }
 }
