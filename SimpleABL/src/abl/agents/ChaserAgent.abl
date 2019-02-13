@@ -95,6 +95,67 @@ behaving_entity ChaserAgent {
 	}
 	
 	/**
+	 * Spawn bots and move with player
+	 */
+	 
+	 sequential behavior manageFormation() {
+	     subgoal spawnFormation();
+	     with (persistent) subgoal updateFormation();
+	 }
+	 
+	 sequential behavior spawnFormation() {
+	     precondition {
+	         (PlayerWME locationY::playerY)
+	         (PlayerWME locationX::playerX)
+	     }
+	     
+	     int posY = 0;
+	     int negY = 0;
+	     int posX = 0;
+	     int negX = 0;
+	     
+	     mental_act {
+	         posY = playerY + 20;
+	         negY = playerY - 20;
+	         posX = playerX + 20;
+	         negX = playerX - 20;
+	     }
+
+	     subgoal moveTo(playerX, posY, 0);
+	     act spawnBot(negX, playerY);
+	     act spawnBot(posX, playerY);
+	     act spawnBot(playerX, negY);
+	 }
+	 
+	 sequential behavior updateFormation() {
+	     precondition {
+	         (PlayerWME locationY::playerY)
+	         (PlayerWME locationX::playerX)
+	     }
+	     
+	     specificity 3;
+	     
+	     int posY = 0;
+	     int negY = 0;
+	     int posX = 0;
+	     int negX = 0;
+	     
+	     mental_act {
+	         posY = playerY + 20;
+	         negY = playerY - 20;
+	         posX = playerX + 20;
+	         negX = playerX - 20;
+	     }
+	     
+	     subgoal moveTo(playerX, posY, 0);
+	     subgoal moveTo(negX, playerY, 1);
+	     subgoal moveTo(posX, playerY, 2);
+	     subgoal moveTo(playerX, negY, 3);
+	     
+	     subgoal Wait(20);
+	 }
+	
+	/**
 	 * Moves the bot to target location.
 	 */
 	 
@@ -110,7 +171,7 @@ behaving_entity ChaserAgent {
 		}
 		specificity 4;
 		
-		if {((X - 50 < botLocX) && (botLocX < X + 50) && (Y - 50 < botLocY) && (botLocY < Y + 50))} {
+		if {((X < botLocX) && (botLocX < X) && (Y< botLocY) && (botLocY < Y))} {
 		    act stop(id);
 		    subgoal Wait(20);
 		} else {
@@ -232,12 +293,13 @@ behaving_entity ChaserAgent {
 			System.out.println("Starting bot Agent");
     	}
      	
-     	with (priority 3) act spawnBot(100,100);
+    // 	with (priority 3) act spawnBot(100,100);
     	with (priority 2) subgoal manageFiring();
     //	with (priority 2) subgoal manageMovement();
-    	with (priority 1) subgoal manageMoveTo(150, 150, 0);
-    	with (priority 1) subgoal manageMoveTo(200, 200, 1);
+    //	with (priority 1) subgoal manageMoveTo(150, 150, 0);
+    //	with (priority 1) subgoal manageMoveTo(200, 200, 1);
     	with (priority 2) subgoal manageColor(220,20,60, 1);
     //	with (priority 1) act setColor(220,20,60, 0);
+        with (priority 3) subgoal manageFormation();
     }
 }
