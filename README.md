@@ -1,3 +1,17 @@
+Advanced task description:
+
+Our goal for the advanced task was to create a series of bots which "intimidate" the player. Basically, we create 4 groups of 4 bots, each group with a different color, which I think of as packs. These four groups of bots surround the player in a semi-random pattern and "throw rocks" at the player at semi-random intervals. The also follow the player around, maintaining a little distance from the player but always being present and keeping pressure on the player. I think that the erratic movement of the bots adds to the effect of intimidation and violence. We made the following modifications to the base code:
+
+Implement a Move action and a moveTo behavior. The behavior takes an X,Y coordinate and a botID and moves the desired bot to the X,Y position over time. We implemented this using the Pythagorean method, which results in a bit of wobble due to int vs. float issues.
+
+Implement a SetColor action and a setColor behavior. The behavior takes an RBG value and a botID and updates the bot's color using a setColor method we implemented in the BotWME. We also added color sensing to the BotSensor.
+
+Implement a SpawnBot action and a spawnFormation behavior. This behavior spawns 16 bots as four groups of four bots in a pattern around the player. Each group of bots is set to a different color using the setColor behavior.
+
+Implement an updateFormation behavior, and sub-behaviors to manage each group. The main behavior simply calls the update behavior for each of the four groups. Each groups update behavior generates a random int and uses that to move the bot to within fixed range of the player's position over time. During movement and once the bots arrive at the position, we modified the move behavior to cause the bots to wobble more than they would otherwise, as we feel this increases the sense of aggression.
+
+Modify the fire behavior and expand it to all four groups of bots. We modified the manageFiring behavior to take a botID, the "leader" of each group. We also modified the wait time in the fire function to use a random int so that the bots appear to "throw rocks" at the player at random intervals.
+
 
 ABL-Assignment
 ====================
