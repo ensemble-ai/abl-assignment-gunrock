@@ -106,9 +106,9 @@ public class GameEngine extends JPanel implements KeyListener {
 		this.initializeInputs();
 		
 		//spawn a single default bot
-		Bot b = new Bot();
-		b.setLocation(new Point(dimensions.x/2, dimensions.y/2));
-		bots.add(b);
+//		Bot b = new Bot();
+//		b.setLocation(new Point(dimensions.x/2, dimensions.y/2));
+//		bots.add(b);
 		
 		// spawn an update thread
 		new Thread() {
